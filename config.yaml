@@ -1,0 +1,45 @@
+profiles:
+  work:
+    planner:
+      type: "gemini"
+      model: "gemini-3.0-pro-latest"
+    coder:
+      type: "bedrock"
+      model: "anthropic.claude-3-5-sonnet-20241022-v2:0"
+      params:
+        region: "us-east-1"
+    executor:
+      type: "local_docker"
+      params:
+        image: "golang:1.24-alpine"
+
+  home:
+    planner:
+      type: "gemini"
+      model: "gemini-3.0-pro-latest"
+    coder:
+      type: "anthropic"
+      model: "claude-3-7-sonnet-latest"
+      # API Key loaded from env: ANTHROPIC_API_KEY
+    executor:
+      type: "remote_docker"
+      params:
+        # Configuration for the Home Server connection
+        # Ensure your SSH keys are set up if using ssh protocol
+        host: "ssh://user@192.168.1.50" 
+        image: "localsprite/test-runner:latest"
+
+  home-lowcost:
+    planner:
+      type: "gemini"
+      model: "gemini-2.0-flash" 
+    coder:
+      type: "local"
+      model: "llama-4-70b"
+      params:
+        endpoint: "http://localhost:11434/v1"
+    executor:
+      type: "remote_docker"
+      params:
+        host: "tcp://192.168.1.50:2376"
+        image: "localsprite/test-runner:lite"
