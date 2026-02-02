@@ -15,31 +15,17 @@ profiles:
 
   home:
     planner:
-      type: "gemini"
-      model: "gemini-3.0-pro-latest"
-    coder:
-      type: "anthropic"
-      model: "claude-3-7-sonnet-latest"
-      # API Key loaded from env: ANTHROPIC_API_KEY
-    executor:
-      type: "remote_docker"
+      type: "local"
+      model: "gemma3:12b"
       params:
-        # Configuration for the Home Server connection
-        # Ensure your SSH keys are set up if using ssh protocol
-        host: "ssh://user@192.168.1.50" 
-        image: "localsprite/test-runner:latest"
-
-  home-lowcost:
-    planner:
-      type: "gemini"
-      model: "gemini-2.0-flash" 
+        endpoint: "http://imperial-construct:11434/v1"
     coder:
       type: "local"
-      model: "llama-4-70b"
+      model: "qwen2.5-coder:7b"
       params:
-        endpoint: "http://localhost:11434/v1"
+        endpoint: "http://imperial-construct:11434/v1"
     executor:
       type: "remote_docker"
       params:
-        host: "tcp://192.168.1.50:2376"
-        image: "localsprite/test-runner:lite"
+        host: "ssh://construct"
+        image: "localsprite/test-runner:latest"
