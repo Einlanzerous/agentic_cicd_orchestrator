@@ -1,4 +1,5 @@
 profiles:
+  # Work profile - uses cloud APIs, local Docker execution
   work:
     planner:
       type: "gemini"
@@ -12,7 +13,11 @@ profiles:
       type: "local_docker"
       params:
         image: "golang:1.24-alpine"
+        command: "go,test,-v,./..."
+        workdir: "/app"
+        test_file_pattern: "generated_test.go"
 
+  # Home profile - uses local Ollama models, remote Docker on construct
   home:
     planner:
       type: "local"
@@ -27,5 +32,50 @@ profiles:
     executor:
       type: "remote_docker"
       params:
-        host: "ssh://construct"
-        image: "localsprite/test-runner:latest"
+        host: "ssh://imperial-construct"
+        image: "golang:1.24-alpine"
+        command: "go,test,-v,./..."
+        workdir: "/app"
+        test_file_pattern: "generated_test.go"
+
+  # Home Playwright profile - for UI testing with Playwright
+  home-playwright:
+    planner:
+      type: "local"
+      model: "gemma3:12b"
+      params:
+        endpoint: "http://imperial-construct:11434/v1"
+    coder:
+      type: "local"
+      model: "qwen2.5-coder:7b"
+      params:
+        endpoint: "http://imperial-construct:11434/v1"
+    executor:
+      type: "remote_docker"
+      params:
+        host: "ssh://imperial-construct"
+        image: "mcr.microsoft.com/playwright:v1.40.0-jammy"
+        command: "npx,playwright,test"
+        workdir: "/app"
+        test_file_pattern: "generated.spec.ts"
+
+  # Home Cypress profile - for UI testing with Cypress
+  home-cypress:
+    planner:
+      type: "local"
+      model: "gemma3:12b"
+      params:
+        endpoint: "http://imperial-construct:11434/v1"
+    coder:
+      type: "local"
+      model: "qwen2.5-coder:7b"
+      params:
+        endpoint: "http://imperial-construct:11434/v1"
+    executor:
+      type: "remote_docker"
+      params:
+        host: "ssh://imperial-construct"
+        image: "cypress/included:13.6.0"
+        command: "cypress,run"
+        workdir: "/e2e"
+        test_file_pattern: "generated.cy.ts"
